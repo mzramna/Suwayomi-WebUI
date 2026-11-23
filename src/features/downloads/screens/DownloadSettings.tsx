@@ -38,6 +38,7 @@ import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { ListItemLink } from '@/base/components/lists/ListItemLink.tsx';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { Notifications } from '@/base/notification/Notifications.ts';
+import { KarasuDownloadPolicySetting } from '@/features/karasu/components/KarasuDownloadPolicySetting.tsx';
 
 type DownloadSettingsType = Pick<
     ServerSettings,
@@ -236,6 +237,7 @@ export const DownloadSettings = () => {
             >
                 <DownloadAheadSetting downloadAheadLimit={metadataSettings.downloadAheadLimit} />
             </List>
+            <KarasuDownloadPolicySetting />
         </List>
     );
 };

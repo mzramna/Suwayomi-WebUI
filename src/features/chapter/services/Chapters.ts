@@ -6,6 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import type { ReactNode } from 'react';
+import { createElement } from 'react';
 import type { DocumentNode, MaybeMasked, Unmasked } from '@apollo/client';
 import { useFragment } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -43,6 +45,8 @@ import { DirectionOffset } from '@/base/Base.types.ts';
 import { Confirmation } from '@/base/AppAwaitableComponent.ts';
 import { i18n } from '@/i18n';
 import { Notifications } from '@/base/notification/Notifications.ts';
+import { KarasuRequests } from '@/features/karasu/Karasu.requests.ts';
+import { KarasuDeleteConfirmationMessage } from '@/features/karasu/components/KarasuDeleteConfirmationMessage.tsx';
 
 export class Chapters {
     static getIds(chapters: { id: number }[]): number[] {
@@ -218,11 +222,35 @@ export class Chapters {
     }
 
     static async delete(chapterIds: number[], { disableConfirmation }: ChapterActionOption = {}): Promise<void> {
+        // preenchido pelo checkbox do diálogo de confirmação (só existe em servidores com a API do Karasu)
+        const karasuDeletion = { deleteFromKarasuDevices: false };
+
         return Chapters.executeAction(
             'delete',
             chapterIds.length,
-            () => requestManager.deleteDownloadedChapters(chapterIds).response,
+            async () => {
+                await requestManager.deleteDownloadedChapters(chapterIds).response;
+
+                if (!karasuDeletion.deleteFromKarasuDevices) {
+                    return;
+                }
+
+                try {
+                    // o usuário está apagando do servidor, então o servidor também deve registrar/aplicar a exclusão
+                    await KarasuRequests.requestDeletions({ chapterIds, deleteFromServer: true });
+                } catch (e) {
+                    // a exclusão no servidor já foi concluída, por isso a falha é apenas notificada
+                    Notifications.error(t`Could not delete the chapters from the Karasu devices`, getErrorMessage(e));
+                }
+            },
             disableConfirmation,
+            (message) =>
+                createElement(KarasuDeleteConfirmationMessage, {
+                    message,
+                    onChange: (deleteFromKarasuDevices) => {
+                        karasuDeletion.deleteFromKarasuDevices = deleteFromKarasuDevices;
+                    },
+                }),
         );
     }
 
@@ -285,6 +313,7 @@ export class Chapters {
         itemCount: number,
         fnToExecute: () => Promise<unknown>,
         disableConfirmation?: boolean,
+        renderConfirmationMessage?: (message: string) => ReactNode,
     ): Promise<void> {
         const { always, bulkAction, bulkActionCountForce } = CHAPTER_ACTION_TO_CONFIRMATION_REQUIRED[action];
         const requiresConfirmation =
@@ -297,10 +326,12 @@ export class Chapters {
                 assertIsDefined(confirmationMessage);
 
                 try {
+                    /* lingui-extract-ignore */
+                    const message = i18n.t({ ...confirmationMessage, values: { count: itemCount } });
+
                     await Confirmation.show({
                         title: t`Are you sure?`,
-                        /* lingui-extract-ignore */
-                        message: i18n.t({ ...confirmationMessage, values: { count: itemCount } }),
+                        message: renderConfirmationMessage ? renderConfirmationMessage(message) : message,
                         actions: {
                             confirm: {
                                 title: t`Ok`,
