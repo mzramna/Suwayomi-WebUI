@@ -1,0 +1,88 @@
+name: CI E2E
+
+# Testes E2E (Playwright) da WebUI contra o servidor mock (tests/e2e/mock-server): não precisa do Suwayomi-Server real.
+on:
+  push:
+    branches: ["**"]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # mesma porta de playwright.config.ts
+  MOCK_PORT: "4580"
+
+jobs:
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up NodeJs
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.2.0
+        with:
+          version: 11.1.2
+
+      - name: Install modules
+        run: pnpm install --frozen-lockfile
+
+      - name: Build app
+        run: pnpm build
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Typecheck E2E sources
+        run: pnpm tsc:e2e
+
+      - name: Start mock server
+        run: |
+          PORT="$MOCK_PORT" nohup pnpm test:e2e:mock > mock-server.log 2>&1 &
+          for _ in $(seq 1 30); do
+            if curl -sf "http://127.0.0.1:$MOCK_PORT/__mock/unhandled" > /dev/null; then
+              echo "mock server is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "mock server did not start" >&2
+          cat mock-server.log >&2
+          exit 1
+
+      - name: Run E2E tests
+        run: pnpm exec playwright test
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.sha }}
+          path: playwright-report
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload traces, screenshots and mock log
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ github.sha }}
+          path: |
+            test-results
+            mock-server.log
+          if-no-files-found: ignore
+          retention-days: 14
