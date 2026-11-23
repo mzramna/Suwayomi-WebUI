@@ -14,11 +14,32 @@ import type { RefreshAccessTokenMutation } from '@/lib/graphql/generated/graphql
 export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
+    PUT = 'PUT',
     PATCH = 'PATCH',
     DELETE = 'DELETE',
 }
 
+export type RestFetcherOptions = {
+    data?: any;
+    httpMethod?: HttpMethod;
+    config?: RequestInit;
+    checkResponseIsJson?: boolean;
+};
+
+export class RestRequestError extends Error {
+    constructor(
+        public readonly status: number,
+        statusText: string,
+        // o corpo ainda não foi consumido, permitindo ler a mensagem de erro retornada pelo servidor
+        public readonly response?: Response,
+    ) {
+        super(`status ${status}: ${statusText}`);
+        this.name = 'RestRequestError';
+    }
+}
+
 export interface IRestClient {
+    fetcher(url: string, options?: RestFetcherOptions): Promise<Response>;
     get(url: string): Promise<Response>;
     delete(url: string): Promise<Response>;
     post(url: string, data?: any): Promise<Response>;
@@ -38,17 +59,7 @@ export class RestClient
 
     public readonly fetcher = async (
         url: string,
-        {
-            data,
-            httpMethod = HttpMethod.GET,
-            config,
-            checkResponseIsJson = true,
-        }: {
-            data?: any;
-            httpMethod?: HttpMethod;
-            config?: RequestInit;
-            checkResponseIsJson?: boolean;
-        } = {},
+        { data, httpMethod = HttpMethod.GET, config, checkResponseIsJson = true }: RestFetcherOptions = {},
     ): Promise<Response> =>
         this.enqueueRequest(async () => {
             if (AuthManager.shouldRefreshAccessToken()) {
@@ -80,14 +91,20 @@ export class RestClient
                     });
                     break;
                 case HttpMethod.POST:
+                case HttpMethod.PUT:
                 case HttpMethod.PATCH:
                 case HttpMethod.DELETE:
                     result = await this.client(updatedUrl, {
-                        ...(isAuthRequired && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
                         ...this.config,
                         ...config,
                         method: httpMethod,
-                        body: JSON.stringify(data),
+                        headers: {
+                            ...(isAuthRequired && accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+                            ...(data !== undefined ? { 'Content-Type': 'application/json' } : {}),
+                            ...this.config.headers,
+                            ...config?.headers,
+                        },
+                        body: data !== undefined ? JSON.stringify(data) : undefined,
                     });
                     break;
                 default:
@@ -104,8 +121,8 @@ export class RestClient
                 return this.fetcher(url, { data, httpMethod, config, checkResponseIsJson });
             }
 
-            if (result.status !== 200) {
-                throw new Error(`status ${result.status}: ${result.statusText}`);
+            if (!result.ok) {
+                throw new RestRequestError(result.status, result.statusText, result);
             }
 
             if (checkResponseIsJson && result.headers.get('content-type') !== 'application/json') {
@@ -144,7 +161,7 @@ export class RestClient
     }
 
     get put() {
-        return (url: string, data?: any) => this.fetcher(url, { data, httpMethod: HttpMethod.POST });
+        return (url: string, data?: any) => this.fetcher(url, { data, httpMethod: HttpMethod.PUT });
     }
 
     get patch() {

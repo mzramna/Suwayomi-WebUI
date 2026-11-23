@@ -134,6 +134,12 @@ msgstr "{0} / {1}"
 msgid "{0} / {1}{2}"
 msgstr "{0} / {1}{2}"
 
+#. placeholder {0}: formatBytes(freeBytes)
+#. placeholder {1}: formatBytes(totalBytes)
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "{0} free of {1}"
+msgstr "{0} free of {1}"
+
 #. placeholder {0}: updateStatus.progress
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
 msgid "{0}% | Updating…"
@@ -409,6 +415,7 @@ msgstr "Active setting ({title})"
 
 #: src/base/components/settings/MutableListSetting.tsx
 #: src/features/extension/store/screens/ExtensionStores.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/manga/components/details/MangaNotes.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 #: src/features/reader/hotkeys/settings/components/ReaderSettingHotkey.tsx
@@ -433,6 +440,10 @@ msgstr "Add extension store"
 #: src/features/manga/components/details/MangaNotes.tsx
 msgid "Add notes"
 msgstr "Add notes"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Add source"
+msgstr "Add source"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -479,6 +490,10 @@ msgstr "Allow deleting bookmarked chapters"
 msgid "Alpha"
 msgstr "Alpha"
 
+#: src/features/karasu/components/KarasuDeleteConfirmationMessage.tsx
+msgid "Also delete from connected Karasu devices"
+msgstr "Also delete from connected Karasu devices"
+
 #. placeholder {0}: tracker.name
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "Also remove from {0}"
@@ -508,6 +523,7 @@ msgstr "Are you sure you want to abort the migration?"
 #: src/features/category/components/CategorySettingsCard.tsx
 #: src/features/chapter/services/Chapters.ts
 #: src/features/extension/store/screens/ExtensionStores.tsx
+#: src/features/karasu/components/KarasuBackupsManager.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 #: src/features/manga/services/Mangas.ts
 #: src/features/source/browse/components/SourceOptions.tsx
@@ -619,6 +635,7 @@ msgid "Background color"
 msgstr "Background color"
 
 #: src/features/backup/screens/Backup.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/settings/screens/Settings.tsx
 msgid "Backup"
 msgstr "Backup"
@@ -631,6 +648,10 @@ msgstr "Backup cleanup"
 msgid "Backup data"
 msgstr "Backup data"
 
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "Backup deleted"
+msgstr "Backup deleted"
+
 #: src/features/backup/screens/Backup.tsx
 msgid "Backup interval"
 msgstr "Backup interval"
@@ -638,6 +659,10 @@ msgstr "Backup interval"
 #: src/features/backup/screens/Backup.tsx
 msgid "Backup location"
 msgstr "Backup location"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Backup mode: only used as a fallback, does not provide chapter updates"
+msgstr "Backup mode: only used as a fallback, does not provide chapter updates"
 
 #: src/features/backup/screens/Backup.tsx
 msgid "Backup restored."
@@ -790,6 +815,7 @@ msgstr "Can't migrate an entry to itself"
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/manga/components/details/MangaNotes.tsx
 #: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
 #: src/features/migration/components/MigrationOptionsDialog.tsx
@@ -908,6 +934,18 @@ msgstr "Chapter transition warning"
 #: src/features/backup/Backup.constants.ts
 msgid "Chapters"
 msgstr "Chapters"
+
+#: src/features/karasu/Karasu.utils.ts
+msgid "Chapters are downloaded to the server and also to the connected Karasu devices."
+msgstr "Chapters are downloaded to the server and also to the connected Karasu devices."
+
+#: src/features/karasu/Karasu.utils.ts
+msgid "Chapters are only downloaded to the server (e.g. a shared NFS volume). Karasu devices read them from the server."
+msgstr "Chapters are only downloaded to the server (e.g. a shared NFS volume). Karasu devices read them from the server."
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Chapters from all linked sources are combined. When the same chapter exists in several sources, the one from the source with the highest priority (top of the list) is used. Drag to change the priority."
+msgstr "Chapters from all linked sources are combined. When the same chapter exists in several sources, the one from the source with the highest priority (top of the list) is used. Drag to change the priority."
 
 #: src/features/library/screens/LibraryDuplicates.tsx
 msgid "Check description"
@@ -1136,10 +1174,22 @@ msgstr "Could not create theme"
 msgid "Could not delete category"
 msgstr "Could not delete category"
 
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "Could not delete the backup"
+msgstr "Could not delete the backup"
+
+#: src/features/chapter/services/Chapters.ts
+msgid "Could not delete the chapters from the Karasu devices"
+msgstr "Could not delete the chapters from the Karasu devices"
+
 #. placeholder {0}: theme.getName()
 #: src/features/theme/components/ThemeList.tsx
 msgid "Could not delete theme \"{0}\""
 msgstr "Could not delete theme \"{0}\""
+
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "Could not download the backup"
+msgstr "Could not download the backup"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 msgid "Could not find source. Check your installed extensions."
@@ -1170,6 +1220,14 @@ msgstr "Could not load latest track info from tracker"
 #: src/features/manga/screens/Manga.tsx
 msgid "Could not load manga"
 msgstr "Could not load manga"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Could not load the merged sources"
+msgstr "Could not load the merged sources"
+
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "Could not load the storage information"
+msgstr "Could not load the storage information"
 
 #: src/features/theme/components/ThemePreview.tsx
 msgid "Could not load theme fonts"
@@ -1400,6 +1458,7 @@ msgstr "Dark"
 msgid "Darken"
 msgstr "Darken"
 
+#: src/features/karasu/components/KarasuStorageCard.tsx
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Database"
 msgstr "Database"
@@ -1441,12 +1500,17 @@ msgstr "Default (Suwayomi)"
 msgid "Default category when adding new manga to the library"
 msgstr "Default category when adding new manga to the library"
 
+#: src/features/karasu/components/KarasuDownloadPolicySetting.tsx
+msgid "Defines where downloaded chapters are stored."
+msgstr "Defines where downloaded chapters are stored."
+
 #: src/base/components/AppbarSearch.tsx
 #: src/base/components/settings/MutableListSetting.tsx
 #: src/features/category/components/CategorySettingsCard.tsx
 #: src/features/chapter/Chapter.constants.ts
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
 #: src/features/extension/store/screens/ExtensionStores.tsx
+#: src/features/karasu/components/KarasuBackupsManager.tsx
 #: src/features/reader/hotkeys/settings/components/Hotkey.tsx
 #: src/features/settings/components/images/KeyValueItem.tsx
 #: src/features/settings/components/images/Processing.tsx
@@ -1587,6 +1651,7 @@ msgstr "Doujinshi"
 #: src/features/chapter/Chapter.constants.ts
 #: src/features/chapter/components/buttons/ChapterDownloadButton.tsx
 #: src/features/chapter/components/ChaptersToolbarMenu.tsx
+#: src/features/karasu/components/KarasuBackupsManager.tsx
 msgid "Download"
 msgstr "Download"
 
@@ -1609,6 +1674,10 @@ msgstr "Download location"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Download new chapters"
 msgstr "Download new chapters"
+
+#: src/features/karasu/components/KarasuDownloadPolicySetting.tsx
+msgid "Download policy"
+msgstr "Download policy"
 
 #: src/features/downloads/screens/DownloadQueue.tsx
 #: src/features/navigation-bar/NavigationBar.constants.ts
@@ -1741,6 +1810,10 @@ msgstr "Entry \"{0} ({1}; {sourceTitle} ({2}))\" in invalid state \"{3}\""
 msgid "Entry \"{id}\" not found"
 msgstr "Entry \"{id}\" not found"
 
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Entry URL in the source"
+msgstr "Entry URL in the source"
+
 #: src/base/components/downloads/DownloadStateIndicatorCircular.tsx
 #: src/base/components/feedback/SnackbarWithDescription.tsx
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
@@ -1845,6 +1918,8 @@ msgstr "Failed to disconnect from KOReader Sync server."
 #: src/features/extension/info/components/SourceCard.tsx
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/history/screens/HistorySettings.tsx
+#: src/features/karasu/components/KarasuDownloadPolicySetting.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 #: src/features/library/screens/LibrarySettings.tsx
 #: src/features/migration/screens/MigrationSelectSource.tsx
@@ -1982,6 +2057,10 @@ msgstr "Forget manga categories"
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fourth to last read chapter"
 msgstr "Fourth to last read chapter"
+
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "Free space"
+msgstr "Free space"
 
 #: src/features/reader/settings/general/ReaderGeneralSettings.tsx
 msgid "Fullscreen"
@@ -2292,6 +2371,20 @@ msgstr "JWT audience claim"
 msgid "JWT refresh token expiry"
 msgstr "JWT refresh token expiry"
 
+#: src/features/karasu/components/KarasuDownloadPolicySetting.tsx
+#: src/features/karasu/screens/KarasuSettings.tsx
+#: src/features/settings/screens/Settings.tsx
+msgid "Karasu"
+msgstr "Karasu"
+
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "Karasu backups"
+msgstr "Karasu backups"
+
+#: src/features/karasu/screens/KarasuSettings.tsx
+msgid "Karasu integration is not available"
+msgstr "Karasu integration is not available"
+
 #: src/features/settings/Settings.constants.ts
 msgid "Keep local"
 msgstr "Keep local"
@@ -2453,6 +2546,14 @@ msgstr "Loading theme fonts…"
 #: src/base/components/settings/SelectSetting.tsx
 msgid "Loading…"
 msgstr "Loading…"
+
+#: src/features/karasu/Karasu.utils.ts
+msgid "Local"
+msgstr "Local"
+
+#: src/features/karasu/Karasu.utils.ts
+msgid "Local (H2)"
+msgstr "Local (H2)"
 
 #: src/features/browse/sources/components/SourceCard.tsx
 #: src/features/manga/components/details/MangaDetails.tsx
@@ -2624,6 +2725,10 @@ msgstr "Medium"
 msgid "Menu"
 msgstr "Menu"
 
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Merged sources"
+msgstr "Merged sources"
+
 #: src/features/settings/Settings.constants.ts
 msgid "Merging"
 msgstr "Merging"
@@ -2772,6 +2877,18 @@ msgstr "Next page"
 msgid "Next:"
 msgstr "Next:"
 
+#: src/features/karasu/Karasu.utils.ts
+msgid "NFS"
+msgstr "NFS"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "No additional sources linked to this entry"
+msgstr "No additional sources linked to this entry"
+
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "No backups uploaded by Karasu devices yet"
+msgstr "No backups uploaded by Karasu devices yet"
+
 #: src/features/chapter/components/ChapterList.tsx
 msgid "No chapters found"
 msgstr "No chapters found"
@@ -2803,6 +2920,10 @@ msgstr "No match found"
 #: src/features/reader/viewer/ReaderChapterViewer.tsx
 msgid "No pages found"
 msgstr "No pages found"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "No results"
+msgstr "No results"
 
 #: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "No sources available to migrate to"
@@ -3033,6 +3154,10 @@ msgstr "Parallel source requests"
 msgid "Password"
 msgstr "Password"
 
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "Path"
+msgstr "Path"
+
 #: src/features/navigation-bar/NavigationBar.constants.ts
 msgid "Paused — {count} remaining"
 msgstr "Paused — {count} remaining"
@@ -3063,6 +3188,7 @@ msgstr "Popular"
 msgid "Port"
 msgstr "Port"
 
+#: src/features/karasu/Karasu.utils.ts
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
@@ -3208,6 +3334,7 @@ msgid "Remind later"
 msgstr "Remind later"
 
 #: src/base/components/settings/DateSetting.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "Remove"
@@ -3288,6 +3415,7 @@ msgstr "Resume"
 #: src/base/components/feedback/EmptyView.tsx
 #: src/base/components/SpinnerImage.tsx
 #: src/features/chapter/components/buttons/ChapterDownloadRetryButton.tsx
+#: src/features/karasu/components/KarasuStorageCard.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 #: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
 msgid "Retry"
@@ -3385,10 +3513,12 @@ msgid "Scroll forward"
 msgstr "Scroll forward"
 
 #: src/base/components/AppbarSearch.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
 msgid "Search"
 msgstr "Search"
 
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
 #: src/features/migration/Migration.constants.ts
 msgid "Search failed"
@@ -3429,6 +3559,10 @@ msgstr "Search results"
 msgid "Search results will include manga that do not match the current filters"
 msgstr "Search results will include manga that do not match the current filters"
 
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Search title"
+msgstr "Search title"
+
 #: src/features/migration/Migration.constants.ts
 msgid "Searching…"
 msgstr "Searching…"
@@ -3462,6 +3596,10 @@ msgstr "Select"
 #: src/features/device/screens/DeviceSetting.tsx
 msgid "Select a device to use its server stored UI settings"
 msgstr "Select a device to use its server stored UI settings"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Select a search result or paste the entry URL as stored by the source (e.g. /manga/some-title)"
+msgstr "Select a search result or paste the entry URL as stored by the source (e.g. /manga/some-title)"
 
 #: src/base/collection/components/SelectableCollectionSelectAll.tsx
 #: src/base/collection/components/SelectableCollectionSelectMode.tsx
@@ -3504,14 +3642,27 @@ msgstr "Server"
 msgid "Server address"
 msgstr "Server address"
 
+#: src/features/karasu/Karasu.utils.ts
+msgid "Server and Karasu devices"
+msgstr "Server and Karasu devices"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Server bindings"
 msgstr "Server bindings"
+
+#: src/features/karasu/Karasu.utils.ts
+msgid "Server only (NFS)"
+msgstr "Server only (NFS)"
 
 #: src/features/backup/Backup.constants.ts
 msgid "Server settings"
 msgstr "Server settings"
 
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "Server storage"
+msgstr "Server storage"
+
+#: src/features/karasu/components/KarasuStorageCard.tsx
 #: src/features/settings/screens/About.tsx
 msgid "Server version"
 msgstr "Server version"
@@ -3720,6 +3871,7 @@ msgstr "Sort"
 
 #: src/features/browse/screens/Browse.tsx
 #: src/features/browse/screens/BrowseSettings.tsx
+#: src/features/karasu/components/KarasuMergedSources.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/source/browse/screens/SourceMangas.tsx
@@ -3803,6 +3955,10 @@ msgstr "Stop"
 #: src/features/updates/components/UpdateChecker.tsx
 msgid "Stop global update"
 msgstr "Stop global update"
+
+#: src/features/karasu/components/KarasuStorageCard.tsx
+msgid "Storage"
+msgstr "Storage"
 
 #: src/features/reader/overlay/navigation/desktop/quick-settings/components/ReaderNavBarDesktopPageScale.tsx
 #: src/features/reader/settings/layout/components/ReaderSettingStretchPage.tsx
@@ -3915,6 +4071,11 @@ msgstr "The \"Basic Authentication\" mode is deprecated and will be removed in t
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "The address of the FlareSolverr server"
 msgstr "The address of the FlareSolverr server"
+
+#. placeholder {0}: backup.name
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "The backup \"{0}\" will be permanently deleted from the server."
+msgstr "The backup \"{0}\" will be permanently deleted from the server."
 
 #: src/features/settings/screens/ImagesSettings.tsx
 msgid "The cache of the client (browser, electron) should get cleared alongside it, otherwise, the client cache will keep getting used"
@@ -4029,6 +4190,14 @@ msgstr "This is the latest version"
 #: src/features/settings/Settings.constants.ts
 msgid "This mode is deprecated and will be removed in the future"
 msgstr "This mode is deprecated and will be removed in the future"
+
+#: src/features/karasu/screens/KarasuSettings.tsx
+msgid "This server does not provide the Karasu API. It requires the Suwayomi-Server fork."
+msgstr "This server does not provide the Karasu API. It requires the Suwayomi-Server fork."
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "This source is already linked"
+msgstr "This source is already linked"
 
 #: src/features/source/browse/components/SourceOptions.tsx
 msgid "This will delete the saved search \"{savedSearch}\""
@@ -4146,6 +4315,8 @@ msgstr "Unable to load client settings"
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/history/screens/History.tsx
 #: src/features/history/screens/HistorySettings.tsx
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+#: src/features/karasu/screens/KarasuSettings.tsx
 #: src/features/library/screens/Library.tsx
 #: src/features/library/screens/LibraryDuplicates.tsx
 #: src/features/library/screens/LibrarySettings.tsx
@@ -4204,9 +4375,17 @@ msgstr "Uninstalling"
 msgid "Unknown"
 msgstr "Unknown"
 
+#: src/features/karasu/components/KarasuBackupsManager.tsx
+msgid "Unknown device"
+msgstr "Unknown device"
+
 #: src/features/migration/MigrationManager.ts
 msgid "Unknown source"
 msgstr "Unknown source"
+
+#: src/features/karasu/components/KarasuMergedSources.tsx
+msgid "Unknown source ({sourceId})"
+msgstr "Unknown source ({sourceId})"
 
 #: src/features/browse/sources/components/SourceCard.tsx
 msgid "Unpin source"
