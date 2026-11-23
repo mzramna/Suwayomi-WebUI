@@ -1,0 +1,112 @@
+name: Upstream sync and build
+
+# Fork mzramna: mantém o master sincronizado com o upstream (Suwayomi/Suwayomi-WebUI),
+# compila a WebUI e publica o `webui.zip` em um release do próprio fork.
+
+on:
+  schedule:
+    # semanalmente, segunda-feira às 05:17 UTC
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upstream-sync-and-build
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPOSITORY: https://github.com/Suwayomi/Suwayomi-WebUI.git
+  UPSTREAM_BRANCH: master
+
+jobs:
+  sync-and-build:
+    name: Merge upstream, build and publish webui.zip
+    # não faz sentido rodar no próprio upstream
+    if: github.repository != 'Suwayomi/Suwayomi-WebUI'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Merge upstream into master
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+          git remote add upstream "$UPSTREAM_REPOSITORY"
+          git fetch upstream "$UPSTREAM_BRANCH"
+
+          if git merge-base --is-ancestor "upstream/$UPSTREAM_BRANCH" HEAD; then
+            echo "master already contains upstream/$UPSTREAM_BRANCH, nothing to merge"
+            exit 0
+          fi
+
+          previous_head="$(git rev-parse HEAD)"
+
+          if ! git merge --no-edit "upstream/$UPSTREAM_BRANCH"; then
+            git merge --abort
+            echo "::error::Merge conflict while merging upstream/$UPSTREAM_BRANCH into master. Resolve it manually (git fetch upstream && git merge upstream/$UPSTREAM_BRANCH) and push."
+            exit 1
+          fi
+
+          # o GITHUB_TOKEN não possui a permissão "workflows" e o push seria rejeitado, então falha de forma explícita
+          if ! git diff --quiet "$previous_head" HEAD -- .github/workflows; then
+            echo "::error::The upstream merge changes files in .github/workflows, which GITHUB_TOKEN is not allowed to push. Merge upstream manually and push."
+            git diff --name-only "$previous_head" HEAD -- .github/workflows
+            exit 1
+          fi
+
+          # push normal (sem force): falha se o master do fork avançou durante a execução
+          git push origin HEAD:master
+
+      - name: Set up NodeJs
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: './package.json'
+
+      - uses: pnpm/action-setup@v4.2.0
+        name: Install pnpm
+        with:
+          version: 11.1.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build webUI
+        # o script "build" já executa o setup (env files)
+        run: pnpm build
+
+      - name: Generate Tag Name
+        id: GenTagName
+        run: |
+          tag="r$(git rev-list HEAD --count)"
+          echo "tag: $tag"
+          echo "value=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create webui.zip
+        run: |
+          echo "${{ steps.GenTagName.outputs.value }}" > build/revision
+          rm -f webui.zip
+          (cd build && zip -9 -r ../webui.zip .)
+          ls -lh webui.zip
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.GenTagName.outputs.value }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "release $TAG already exists, replacing webui.zip"
+            gh release upload "$TAG" webui.zip --clobber
+          else
+            gh release create "$TAG" webui.zip \
+              --target "$(git rev-parse HEAD)" \
+              --title "$TAG" \
+              --notes "Automated build of the fork (upstream/$UPSTREAM_BRANCH merged). Contains the WebUI build as webui.zip."
+          fi
