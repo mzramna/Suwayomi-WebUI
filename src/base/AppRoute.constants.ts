@@ -98,6 +98,10 @@ export const AppRoutes = {
                 match: 'backup',
                 path: '/settings/backup',
             },
+            karasu: {
+                match: 'karasu',
+                path: '/settings/karasu',
+            },
             server: {
                 match: 'server',
                 path: '/settings/server',

@@ -20,21 +20,26 @@ import WebIcon from '@mui/icons-material/Web';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import DevicesIcon from '@mui/icons-material/Devices';
 import SyncIcon from '@mui/icons-material/Sync';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import PaletteIcon from '@mui/icons-material/Palette';
 import HistoryIcon from '@mui/icons-material/History';
 import ImageIcon from '@mui/icons-material/Image';
 import Box from '@mui/material/Box';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
+import type { MessageDescriptor } from '@lingui/core';
 import { ListItemLink } from '@/base/components/lists/ListItemLink.tsx';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { OffsetComponent, useOffsetComponent } from '@/base/components/OffsetComponent.tsx';
+import { useKarasuAvailability } from '@/features/karasu/hooks/useKarasu.ts';
 
-const SETTING_MENU_ITEMS = [
+type SettingMenuItem = { to: string; icon: ReactElement; label: MessageDescriptor; requiresKarasu?: boolean };
+
+const SETTING_MENU_ITEMS: SettingMenuItem[] = [
     { to: AppRoutes.settings.children.appearance.path, icon: <PaletteIcon />, label: msg`Appearance` },
     { to: AppRoutes.settings.children.reader.path, icon: <AutoStoriesIcon />, label: msg`Reader` },
     { to: AppRoutes.settings.children.library.path, icon: <CollectionsOutlinedBookmarkIcon />, label: msg`Library` },
@@ -42,6 +47,13 @@ const SETTING_MENU_ITEMS = [
     { to: AppRoutes.settings.children.images.path, icon: <ImageIcon />, label: msg`Images` },
     { to: AppRoutes.settings.children.tracking.path, icon: <SyncIcon />, label: msg`Tracking` },
     { to: AppRoutes.settings.children.backup.path, icon: <BackupIcon />, label: msg`Backup` },
+    {
+        to: AppRoutes.settings.children.karasu.path,
+        icon: <CloudSyncIcon />,
+        label: msg`Karasu`,
+        // só existe em servidores com a API do fork (Karasu)
+        requiresKarasu: true,
+    },
     { to: AppRoutes.settings.children.browse.path, icon: <ExploreOutlinedIcon />, label: msg`Browse` },
     { to: AppRoutes.settings.children.history.path, icon: <HistoryIcon />, label: msg`History` },
     { to: AppRoutes.settings.children.device.path, icon: <DevicesIcon />, label: msg`Device` },
@@ -59,10 +71,11 @@ function SettingsMenu({
 }) {
     const { t } = useLingui();
     const { pathname } = useLocation();
+    const { isAvailable: isKarasuAvailable } = useKarasuAvailability();
 
     return (
         <List {...slots?.list} sx={{ padding: 0 }}>
-            {SETTING_MENU_ITEMS.map((item) => (
+            {SETTING_MENU_ITEMS.filter((item) => !item.requiresKarasu || isKarasuAvailable).map((item) => (
                 <ListItemLink
                     {...slots?.listItemLink}
                     key={item.to}

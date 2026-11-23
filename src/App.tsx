@@ -54,6 +54,7 @@ const { Settings, SettingsIndex } = loadable(
 );
 const { About } = loadable(() => import('@/features/settings/screens/About.tsx'), lazyLoadFallback);
 const { Backup } = loadable(() => import('@/features/backup/screens/Backup.tsx'), lazyLoadFallback);
+const { KarasuSettings } = loadable(() => import('@/features/karasu/screens/KarasuSettings.tsx'), lazyLoadFallback);
 const { CategorySettings } = loadable(
     () => import('@/features/category/screens/CategorySettings.tsx'),
     lazyLoadFallback,
@@ -276,6 +277,7 @@ const MainApp = () => {
                                 />
                             </Route>
                             <Route path={AppRoutes.settings.children.backup.match} element={<Backup />} />
+                            <Route path={AppRoutes.settings.children.karasu.match} element={<KarasuSettings />} />
                             <Route path={AppRoutes.settings.children.server.match} element={<ServerSettings />} />
                             <Route path={AppRoutes.settings.children.webui.match} element={<WebUISettings />} />
                             <Route path={AppRoutes.settings.children.browse.match}>
