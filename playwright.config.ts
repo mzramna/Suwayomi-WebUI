@@ -25,6 +25,7 @@ export default defineConfig({
         // o service worker do PWA não deve interceptar as requisições que os testes observam
         serviceWorkers: 'block',
         locale: 'en-US',
+        viewport: { width: 1280, height: 900 },
         timezoneId: 'UTC',
         // Chromium já instalado fora do cache do Playwright (ex.: ambiente local sem acesso à rede)
         launchOptions: process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {},

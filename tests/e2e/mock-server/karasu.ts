@@ -456,6 +456,11 @@ export const handleKarasuRequest = (req: IncomingMessage, res: ServerResponse, u
         return sendError(res, 404, 'Not found');
     }
 
+    const fault = state.faults.find((item) => item.method === req.method && item.path === url.pathname);
+    if (fault) {
+        return sendError(res, fault.status, fault.error ?? 'Injected failure');
+    }
+
     try {
         handleRoute({
             method: req.method ?? 'GET',

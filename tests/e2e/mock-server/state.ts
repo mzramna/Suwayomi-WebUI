@@ -127,7 +127,11 @@ export type RecordedRequest = {
     status: number;
 };
 
+/** Falha injetada: as requisições `method` + `path` (sem query string) do Karasu respondem `status`. */
+export type Fault = { method: string; path: string; status: number; error?: string };
+
 export type MockState = {
+    faults: Fault[];
     /** `null` simula um servidor SEM as rotas karasu (todas devolvem 404) */
     health: KarasuHealth | null;
     policy: 'SERVER_ONLY' | 'SERVER_AND_CLIENTS';
@@ -254,6 +258,7 @@ export const createDefaultBackups = (): BackupRecord[] => [
 ];
 
 export const createDefaultState = (): MockState => ({
+    faults: [],
     health: {
         status: 'ok',
         serverVersion: 'v2.1.0',
@@ -361,6 +366,7 @@ export type SeedBody = {
     categories?: MockCategory[];
     mangas?: MockManga[];
     chapters?: MockChapter[];
+    faults?: Fault[];
 };
 
 /**
@@ -404,6 +410,9 @@ export const applySeed = (seed: SeedBody): void => {
     }
     if (seed.chapters) {
         state.chapters = seed.chapters;
+    }
+    if (seed.faults) {
+        state.faults = seed.faults;
     }
 };
 
