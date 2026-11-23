@@ -793,12 +793,9 @@ const Mutation: Record<string, unknown> = {
     },
     deleteCategory: ({ input }: Args) => {
         const category = requireCategory(input.categoryId);
+        // os vínculos somem em cascata no banco e, como no servidor, essa remoção não gera operações CATEGORY_LINK
         state.mangas.forEach((manga) => {
-            if (manga.categoryIds.includes(category.id)) {
-                const before = manga.categoryIds;
-                manga.categoryIds = before.filter((id) => id !== category.id);
-                recordLinkOperations(manga, before, manga.categoryIds);
-            }
+            manga.categoryIds = manga.categoryIds.filter((id) => id !== category.id);
         });
         state.categories = state.categories.filter(({ id }) => id !== category.id);
         normalizeCategoryOrder();

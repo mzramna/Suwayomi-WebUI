@@ -52,6 +52,9 @@ const matchesPath = (requestPath: string, expected: string): boolean => {
     return expected.endsWith('*') ? path.startsWith(expected.slice(0, -1)) : path === expected;
 };
 
+/** Variáveis GraphQL de uma requisição registrada. */
+export const variablesOf = (request: RecordedRequest): Record<string, any> => request.graphql?.variables ?? {};
+
 export class MockClient {
     constructor(private readonly api: APIRequestContext) {}
 
