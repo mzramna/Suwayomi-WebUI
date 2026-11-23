@@ -420,6 +420,25 @@
                 "no-relative-import-paths/no-relative-import-paths": "off",
             },
         },
+        {
+            // testes E2E e servidor mock (não fazem parte do bundle da WebUI): o mock muta o estado em memória por
+            // desenho, imprime no console e importa os módulos vizinhos de forma relativa
+            "files": ["tests/**/*", "playwright.config.ts"],
+            "env": {
+                "node": true,
+            },
+            "rules": {
+                "no-console": "off",
+                "no-param-reassign": "off",
+                "no-return-assign": "off",
+                "no-multi-assign": "off",
+                "no-use-before-define": "off",
+                "no-relative-import-paths/no-relative-import-paths": "off",
+                "@tony.ganchev/header/header": "off",
+                "import/no-default-export": "off",
+                "unicorn/consistent-function-scoping": "off",
+            },
+        },
     ],
     "ignorePatterns": ["src/lib/graphql/generated/**", "tools/eslint-plugin-header.cjs"],
 }
