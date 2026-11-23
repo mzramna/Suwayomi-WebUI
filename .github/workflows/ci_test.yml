@@ -1,0 +1,50 @@
+name: CI Test
+
+# O script `pnpm test` do projeto é apenas um placeholder, então a verificação automática da WebUI
+# é: tipos (tsc), lint e formatação. Quando houver testes de verdade, basta ligá-los ao `pnpm test`.
+on:
+  push:
+    branches: ["**"]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Typecheck, lint, format, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up NodeJs
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.2.0
+        with:
+          version: 11.1.2
+
+      - name: Install modules
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm tsc
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Test
+        run: pnpm test

@@ -8,6 +8,7 @@
 
 export default {
     '*.{ts,tsx,js,jsx}': ['oxfmt --write', 'oxlint --fix', () => `pnpm i18n:extract`, 'git add src/i18n/locales/*.po'],
-    '*.{json,md,yml,yaml,css,scss,html,graphql}': 'oxfmt --write',
+    // .github/** is ignored by oxfmt; without this flag a commit touching only workflows fails the hook
+    '*.{json,md,yml,yaml,css,scss,html,graphql}': 'oxfmt --write --no-error-on-unmatched-pattern',
     '*.{ts,tsx,json}': () => 'pnpm tsc',
 };
