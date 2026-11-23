@@ -58,6 +58,7 @@ import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { copyToClipboard } from '@/lib/HelperFunctions.ts';
 import { ClipBoardGuard } from '@/base/components/guard/ClipBoardGuard.tsx';
 import { Notifications } from '@/base/notification/Notifications.ts';
+import { KarasuMergedSources } from '@/features/karasu/components/KarasuMergedSources.tsx';
 
 const DetailsWrapper = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -293,6 +294,7 @@ export const MangaDetails = ({
                 </MangaButtonsContainer>
             </TopContentWrapper>
             <DescriptionGenre manga={manga} mode={mode} />
+            <KarasuMergedSources manga={manga} />
         </DetailsWrapper>
     );
 };
